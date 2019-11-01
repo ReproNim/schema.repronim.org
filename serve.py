@@ -89,7 +89,7 @@ async def main(request):
 async def restart_docker_compose(service=None):
     dc_cmd = ["docker-compose",
               "-f",
-              "/home/ubuntu/src/docker-compose.yml"]
+              "docker-compose.yml"]
     down_cmd = dc_cmd + ["down",
                          "--rmi",
                          "all"]
@@ -140,7 +140,6 @@ async def post_reset(request):
 if __name__ == "__main__":
     logger.info("Starting backend")
     if TOKEN is None:
-        import uuid
         TOKEN = str(uuid.uuid4()).split('-')[-1]
         logger.info(f"TOKEN={TOKEN}")
     app.run(host="0.0.0.0", port=8003)
