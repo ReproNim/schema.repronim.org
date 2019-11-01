@@ -1,0 +1,22 @@
+version: "3.0"
+services:
+  schemaui:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.ui
+      args:
+        gitcommithash: master
+    ports:
+      - "8002:5000"
+    volumes:
+      - /vagrant:/vagrant
+  reprolibserve:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.rl
+      args:
+        gitcommithash: master
+    ports:
+      - "8000:8000"
+    volumes:
+      - /vagrant:/vagrant
