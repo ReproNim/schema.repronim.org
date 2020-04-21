@@ -5,7 +5,7 @@ ARG gitcommithash
 
 RUN echo "Build number: $buildno"
 
-RUN apk add --no-cache curl unzip git
+RUN apk add --no-cache curl unzip git libxml2-dev libxslt-dev
 
 RUN echo "Based on commit: $gitcommithash"
 RUN mkdir -p /opt && cd /opt && \
