@@ -1,67 +1,49 @@
-import asyncio
-from datetime import datetime
-from datetime import timedelta
-import math
 import uuid
-import sys
 import os
 import subprocess as sp
 
 from sanic import Sanic
-from sanic.log import logger, error_logger, access_logger
-from sanic import response
-from sanic.response import json, text
-from sanic_cors import CORS, cross_origin
+from sanic.log import logger
+from sanic.response import json
+from sanic_cors import CORS
 
+production = 'DEV4d2966bb4488' not in os.environ
+basedir = os.environ["HOME"] if production else os.getcwd()
+logdir = os.path.join(basedir, "controller")
+if not os.path.exists(logdir):
+    os.makedirs(logdir, exist_ok=True)
+TOKEN = None
+handler_dict = {"class": "logging.handlers.TimedRotatingFileHandler",
+                "when": 'D',
+                "interval": 7,
+                "backupCount": 10,
+                "formatter": "generic",
+                }
 LOG_SETTINGS = dict(
     version=1,
     disable_existing_loggers=False,
     loggers={
-        "sanic.root": {"level": "INFO", "handlers": ["console", "consolefile"]},
+        "sanic.root": {"level": "INFO", "handlers": ["consolefile"]},
         "sanic.error": {
             "level": "INFO",
-            "handlers": ["error_console", "error_consolefile"],
+            "handlers": ["error_consolefile"],
             "propagate": True,
             "qualname": "sanic.error",
         },
         "sanic.access": {
             "level": "INFO",
-            "handlers": ["access_console", "access_consolefile"],
+            "handlers": ["access_consolefile"],
             "propagate": True,
             "qualname": "sanic.access",
         },
     },
     handlers={
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "generic",
-            "stream": sys.stdout,
-        },
-        "error_console": {
-            "class": "logging.StreamHandler",
-            "formatter": "generic",
-            "stream": sys.stderr,
-        },
-        "access_console": {
-            "class": "logging.StreamHandler",
-            "formatter": "access",
-            "stream": sys.stdout,
-        },
-        "consolefile": {
-            'class': 'logging.FileHandler',
-            'filename': "/vagrant/controller/console.log",
-            "formatter": "generic",
-        },
-        "error_consolefile": {
-            'class': 'logging.FileHandler',
-            'filename': "/vagrant/controller/error.log",
-            "formatter": "generic",
-        },
-        "access_consolefile": {
-            'class': 'logging.FileHandler',
-            'filename': "/vagrant/controller/access.log",
-            "formatter": "access",
-        },
+        "consolefile": {**handler_dict,
+                        **{'filename': os.path.join(logdir, "console.log")}},
+        "error_consolefile": {**handler_dict,
+                              **{'filename': os.path.join(logdir, "error.log")}},
+        "access_consolefile": {**handler_dict,
+                               **{'filename': os.path.join(logdir, "access.log")}},
     },
     formatters={
         "generic": {
@@ -78,8 +60,12 @@ LOG_SETTINGS = dict(
     },
 )
 
-app = Sanic("controller", log_config=LOG_SETTINGS)
+if production:
+    app = Sanic("controller", log_config=LOG_SETTINGS)
+else:
+    app = Sanic("controller")
 CORS(app)
+
 
 @app.route("/")
 async def main(request):
@@ -122,7 +108,6 @@ async def get_status(request):
     cproc = sp.run(['docker', 'ps', '-a'], stdout=sp.PIPE, stderr=sp.PIPE)
     return json({"status": cproc})
 
-TOKEN = None
 
 @app.route("/reset", methods=["POST", ])
 async def post_reset(request):
@@ -140,6 +125,6 @@ async def post_reset(request):
 if __name__ == "__main__":
     logger.info("Starting backend")
     if TOKEN is None:
-        TOKEN = str(uuid.uuid4()).split('-')[-1]
+        TOKEN = uuid.uuid4().hex
         logger.info(f"TOKEN={TOKEN}")
     app.run(host="0.0.0.0", port=8003)
