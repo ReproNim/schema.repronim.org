@@ -100,6 +100,13 @@ async def restart_docker_compose(service=None):
     except sp.SubprocessError as e:
         return 1
     logger.info('Completed reset: {}'.format(cproc))
+    prune_cmd = ["docker", "system", "prune", "-af"]
+    try:
+        logger.info("Pruning docker")
+        cproc = sp.run(prune_cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+    except sp.SubprocessError as e:
+        return 1
+    logger.info('Completed prune: {}'.format(cproc))
     return 0
 
 
