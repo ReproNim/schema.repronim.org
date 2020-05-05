@@ -8,7 +8,7 @@ from sanic.response import json
 from sanic_cors import CORS
 
 production = 'DEV4d2966bb4488' not in os.environ
-basedir = os.environ["HOME"] if production else os.getcwd()
+basedir = '/vagrant' if production else os.getcwd()
 logdir = os.path.join(basedir, "controller")
 if not os.path.exists(logdir):
     os.makedirs(logdir, exist_ok=True)
