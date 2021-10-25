@@ -14,7 +14,7 @@ RUN mkdir -p /opt && cd /opt && \
     mv reprolib-server* reprolib-server
 
 WORKDIR /opt
-RUN git clone --depth 1 https://github.com/ReproNim/reproschema
+RUN git clone --depth 1 https://github.com/ReproNim/reproschema-library
 
 WORKDIR /opt/reprolib-server
 RUN pip3 install -r requirements.txt
