@@ -3,7 +3,7 @@ services:
   schemaui:
     build:
       context: ./docker
-      dockerfile: Dockerfile.ui
+      dockerfile: ui.Dockerfile
       args:
         gitcommithash: master
     ports:
