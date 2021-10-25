@@ -10,7 +10,7 @@ RUN mkdir -p /opt && cd /opt && \
     unzip frontend.zip && rm frontend.zip && \
     mv reproschema-ui* frontend
 RUN cd /opt/frontend && \
-    sed -i 's#/reproschema-ui/#/ui/#g' config/index.js && \
+#    sed -i 's#/reproschema-ui/#/ui/#g' config/index.js && \
     npm install && npm run build
 
 WORKDIR /opt/frontend
