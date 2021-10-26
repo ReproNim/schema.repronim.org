@@ -14,4 +14,4 @@ RUN cd /opt/frontend && \
     npm install && npm run build
 
 WORKDIR /opt/frontend
-ENTRYPOINT ["node", "server.js"]
+ENTRYPOINT ["npm", "run", "serve"]
