@@ -17,5 +17,6 @@ WORKDIR /opt
 RUN git clone --depth 1 https://github.com/ReproNim/reproschema-library
 
 WORKDIR /opt/reprolib-server
+RUN python -m pip install --upgrade pip setuptools
 RUN pip3 install -r requirements.txt
 ENTRYPOINT ["python3", "-m", "main"]
